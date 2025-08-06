@@ -1,0 +1,31 @@
+{
+  "name": "ida_exam",
+  "version": "1.0.0",
+  "description": "ida eksamen",
+  "homepage": "https://github.com/Freddo2300/ida_exam#readme",
+  "bugs": {
+    "url": "https://github.com/Freddo2300/ida_exam/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Freddo2300/ida_exam.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "main.js",
+  "exports": {
+    "import": "./index-import.js",
+    "require": "./index-require.cjs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.7.1",
+    "chalk": "^5.4.1",
+    "csv-parse": "^6.1.0",
+    "figlet": "^1.8.2",
+    "log-update": "^6.1.0"
+  }
+}

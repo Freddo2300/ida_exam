@@ -41,7 +41,7 @@
  *
  * @constructor(name, age, city)
  */
-export class Person {
+class Person {
     name;
     age;
     city;
@@ -106,7 +106,7 @@ export class Person {
  *
  * notice: merely here to show inheritance and polymprohism.
  */
-export class Employee extends Person {
+class Employee extends Person {
     #salary; // `#` is synonymous with private, i.e. only visible within scope of class.
     #company; // all these properties are unique to `Employee` class
     #position;
@@ -210,3 +210,11 @@ export class Employee extends Person {
         }
     }
 }
+
+const executeScript = async () => {
+       
+}
+
+const person = { Person, Employee };
+
+export default person;

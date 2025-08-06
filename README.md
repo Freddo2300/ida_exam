@@ -21,5 +21,6 @@ For at køre programmet skal du enten bruge en editor som Visual Studio Code ell
 ```sh
 unzip ~/Downloads/ida_exam.zip -d ~/Downloads/ida_exam # hvis du ikke allerede har pakket filerne ud
 cd ~/Downloads/ida_exam
+npm install # installerer pakkerne
 node ./main.js
 ```
