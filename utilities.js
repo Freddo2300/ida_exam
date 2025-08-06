@@ -1,16 +1,14 @@
-const chalk = require('chalk');
-
 class ChalkUtilities {
     static rgbMin = 0;
     static rgbMax = 255;
 
-    static rgbMinCeil = Math.ceil(rgbMin);
-    static rgbMaxFloor = Math.Floor(rgbMax);
+    static rgbMinCeil = Math.ceil(this.rgbMin);
+    static rgbMaxFloor = Math.floor(this.rgbMax);
 
     static ignoreChars = /[^!-~]/g;
 
     static generateRandomRgbValue() {
-        return Math.floor(Math.random() * (rgbMaxFloor - rgbMinCeil + 1) + rgbMinCeil);
+        return Math.floor(Math.random() * (this.rgbMaxFloor - this.rgbMinCeil + 1) + this.rgbMinCeil);
     }
 
     static generateChalkRgb() {
@@ -26,6 +24,9 @@ class ChalkUtilities {
 
         const rgbStep = rgbMax / input.replaceAll(ignoreChars, '').length;
 
-        for (let i = 0; i <= input.length)
     }
 }
+
+const util = { ChalkUtilities };
+
+export default util;

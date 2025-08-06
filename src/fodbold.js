@@ -1,44 +1,16 @@
 import { readFile, writeFile, appendFile} from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { input, select } from '@inquirer/prompts';
+import { input, select, confirm, Separator } from '@inquirer/prompts';
 import { parse } from 'csv-parse';
+import { init } from '../cli.js';
 
-const readCsvFile = async (path) => {
-    const promise = await readFile(path, { encoding: 'utf8' });
-    
-    return Promise.resolve(promise);
-}
-
-const transformData = async (csvData) => {  
-    let data = csvData
-        .toString()
-        .split('\n')
-        .map(e => e.trim())
-        .map(e => e.split(';').map(e => e.trim()));
-    
-    let columns = data.shift();
-
-    data = data.map(function(row) {
-        return columns.reduce(function(obj, key, i) {
-            obj[key.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '').toLowerCase()] = row[i];
-
-            return obj;
-        }, {});
-    });
-
-    return { columns, data }
-}
-
-const displayData = async (data) => {
-    console.table(data.data, data.column);
-}
-
-const addData = async (file) => {
-    }
-
-const deleteData = async (file) => {
-
-}
+const ScriptAction = Object.freeze({
+    DISPLAY: 1,
+    TOPSCORER: 2,
+    ADD: 3,
+    DELETE: 4,
+    EXIT: 5
+});
 
 class Player {
     player;
@@ -109,6 +81,11 @@ class DataFrame {
         this.data = value;
     }
 
+    async reload() {
+        let fileData = await this.readFile(this.getFilePath);
+        await this.transformFileData(fileData);
+    }
+
     async readFile(filePath) {
         this.setFilePath = filePath;
         
@@ -139,8 +116,15 @@ class DataFrame {
             }, {});
         });
         
+        for (let prop in fileData.at(-1)) {
+            if (fileData.at(-1).hasOwnProperty(prop) && (fileData.at(-1)[prop] === null || fileData.at(-1)[prop] === undefined)) {
+                fileData.pop();
+                break;
+            }
+        }
+
         this.setFileData = fileData;
-        this.setColumns = columns;
+        this.setColumns = Object.values(fileData.shift());
         this.setData = fileData;
     }
 
@@ -149,11 +133,18 @@ class DataFrame {
             if (typeof this.getColumns === 'undefined' || typeof this.getData === 'undefined') {
                 throw new Error(`columns or data cannot be ${typeof undefined}`)
             }
-
             console.table(this.getData, this.getColumns);
         } catch (e) {
             console.error(e.message);
         }
+    }
+    
+    showTopScorer() {
+        let topScorer = this.data.reduce((maxObj, currentObj) => {
+            return currentObj > maxObj.gls ? currentObj : maxObj;
+        });
+
+        console.log(topScorer);
     }
 
     async appendToFile() {
@@ -183,7 +174,7 @@ class DataFrame {
         });
 
         let born = await input({
-            message: "DoB: ",
+            message: "birth year: ",
             required: true,
             validate: (val) => !isNaN(val) && !isNaN(parseInt(val)),
         });
@@ -203,41 +194,59 @@ class DataFrame {
         let ga = parseInt(gls) + parseInt(ast);
 
         let newPlayer = new Player(player, nation, pos, squad, comp, born, gls, ast, ga);
-
         try {
             const content = Object.values(newPlayer).join(";").concat("\n");
-            await appendFile(file, content, { encoding: "utf8" });
+            await appendFile(this.getFilePath, content, { encoding: "utf8" });
+
+            await this.reload();
         } catch (e) {
             console.error(e.message);
         }
     }
 
-    async deleteFromTable() {
+    async deleteFromFile() {
         let answer;
+        let selectable = [];
+
+        for (const [key, value] of this.getData.entries()) {
+            let addToSelectable = { name: Object.values(value).join(";"), value: key };
+            selectable.push(addToSelectable);
+        }
 
         answer = await select({
-            message: 'select player to delete',
+            message: "select player to delete",
             choices: [
-                ...this.data
+                new Separator("sep"),
+                ...selectable
             ],
         });
-
-        console.log(answer);
 
         let confirmDelete = await confirm({
             message: `are you sure you want to delete item ${answer}?`
         });
 
-        if (!confirmDate) {
+        if (!confirmDelete) {
             return;
         }
 
-        let deleteItemIndex = this.data.indexOf(answer);
-        this.data.splice(deleteItemIndex, 1);
+        this.getData.splice(answer, 1);
 
-        let csv = this.data.forEach((item) => {
-            return Object.values(item).join(';').concat('\n');
+        let columns = this.getColumns.join(';');
+        let rows = this.getData.map(obj => {
+            return Object.values(obj).map(value => {
+                return value;
+            }).join(';');
         });
+        
+        let csv = `${columns}\n${rows.join('\n')}`;
+        
+        try {
+            await writeFile(this.getFilePath, csv, { encoding: "utf8" });
+
+            await this.reload();
+        } catch (e) {
+            console.error(e.message);
+        }
     }
 }
 
@@ -249,9 +258,50 @@ const initScript = async () => {
 
     await df.transformFileData(data);
     
-    let choice = await select({
-        message: 'select '
-    });
+    let choice;
+    
+    do {
+        choice = await select({
+            message: "select action",
+            choices: [
+                { name: "Display players", value: ScriptAction.DISPLAY },
+                { name: "Show top scorer", value: ScriptAction.TOPSCORER },
+                { name: "Add new player", value: ScriptAction.ADD },
+                { name: "Remove a player", value: ScriptAction.DELETE },
+                { name: "Exit", value: ScriptAction.EXIT }
+            ],
+        });
+
+        switch (choice) {
+            case ScriptAction.DISPLAY: {
+                df.showFileContentAsTable();
+                break;
+            }
+            case ScriptAction.TOPSCORER: {
+                df.showTopScorer();
+                break;
+            }
+            case ScriptAction.ADD: {
+                await df.appendToFile();
+                console.clear();
+                df.showFileContentAsTable();
+                break;
+            }
+            case ScriptAction.DELETE: {
+                await df.deleteFromFile();
+                console.clear();
+                df.showFileContentAsTable();
+                break;
+            }
+            case ScriptAction.EXIT: {
+                console.clear();
+                await init();
+            }
+            default: {
+                console.log(`${choice} is not valid`);
+            }
+        }
+    } while (choice !== ScriptAction.EXIT)
 }
 
 const fodbold = { initScript };

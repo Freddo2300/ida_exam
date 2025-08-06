@@ -211,6 +211,10 @@ class Employee extends Person {
     }
 }
 
+const executeScript = async () => {
+       
+}
+
 const person = { Person, Employee };
 
 export default person;

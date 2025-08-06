@@ -1,3 +1,8 @@
+import { input, select, confirm } from '@inquirer/prompts';
+import chalk from 'chalk';
+
+import { init } from '../cli.js';
+
 // Enum-like constant to select function depending on given direction.
 const Direction = Object.freeze({
     ASCENDING: "ascending".toUpperCase(),
@@ -63,18 +68,30 @@ function isFruitCorrect(checkFruit, correctFruit, index) {
     }
 }
 
-/**
- * Utility function to initialise an Array.
- * @returns {Array}.
- */
-function initArray() {
-    return Array.prototype.slice.call(arguments);
+async function promptItems() {
+    let promise = await input({
+        message: "Add items to array separated by comma.",
+    });
+    
+    return Promise.resolve(promise);
 }
 
-async function promptFruitArray() {
-    let arr = await input({
-        name: "Add items to array separated by comma.",
-    });
+async function promptCorrectItem(items) {
+    let selectedItem;
+    let choice;
+
+    do {
+        selectedItem = await select({
+            message: "select the correct fruit.",
+            choices: items
+        });
+
+        choice = await confirm({
+            message: `are you sure ${selectedItem} is the correct choice?`
+        });
+    } while (choice !== true)
+
+    return selectedItem;
 }
 
 /**
@@ -103,6 +120,56 @@ function iterate(arr, direction, correctFruit) {
     }
 }
 
-const frugt = { initArray, iterate, Direction };
+const initFruits = async () => {
+    let fruitList = await promptItems();
+    fruitList = fruitList.split(",");
+
+    let correctFruit = await promptCorrectItem(fruitList);
+    
+    return { fruitList, correctFruit };
+}
+
+const executeScript = async () => {
+    let fruits = await initFruits();
+
+    let selectedAction;
+    let direction;
+    
+    do {
+        selectedAction = await select({
+            message: "what would you like to do?",
+            choices: [
+                { name: "Start over.", value: "INIT", },
+                { name: "Iterate ascending.", value: "ITERATE_ASCENDING", },
+                { name: "Iterate descending.", value: "ITERATE_DESCENDING", },
+                { name: "Exit.", value: "EXIT" }
+            ],
+        });
+
+        switch (selectedAction) {
+            case "INIT": {
+                fruits = await initFruits();
+                break;
+            }
+            case "ITERATE_ASCENDING": {
+                direction = Direction.ASCENDING;
+                iterate(fruits.fruitList, direction, fruits.correctFruit);
+                break;
+            }
+            case "ITERATE_DESCENDING": {
+                direction = Direction.DESCENDING;
+                iterate(fruits.fruitList, direction, fruits.correctFruit);
+                break;
+            }
+            case "EXIT": {
+                console.clear();
+                await init();
+                break;
+            }
+        }
+    } while (selectedAction !== "EXIT");
+}
+
+const frugt = { executeScript};
 
 export default frugt;

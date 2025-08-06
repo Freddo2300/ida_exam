@@ -1,4 +1,4 @@
-﻿Player;Nation;Pos;Squad;Comp;Born;Gls;Ast;G+A
+Player;Nation;Pos;Squad;Comp;Born;Gls;Ast;G+A
 Kylian Mbappé;FRA;FW;Real Madrid;La Liga;1998;31;3;34
 Mohamed Salah;EGY;FW;Liverpool;Premier League;1992;29;18;47
 Robert Lewandowski;POL;FW;Barcelona;La Liga;1988;27;2;29
@@ -6,17 +6,16 @@ Harry Kane;ENG;FW;Bayern Munich;Bundesliga;1993;26;9;35
 Mateo Retegui;ITA;FW;Atalanta;Serie A;1999;25;8;33
 Alexander Isak;SWE;FW;Newcastle Utd;Premier League;1999;23;6;29
 Erling Haaland;NOR;FW;Manchester City;Premier League;2000;22;3;25
-Ousmane Dembélé;FRA;FW;Paris S-G;Ligue 1;1997;21;6;27
-Mason Greenwood;ENG;FW,MF;Marseille;Ligue 1;2001;21;5;26
 Ante Budimir;CRO;FW;Osasuna;La Liga;1991;21;4;25
-Serhou Guirassy;GUI;FW;Dortmund;Bundesliga;1996;21;4;25
 Patrik Schick;CZE;FW;Leverkusen;Bundesliga;1996;21;0;21
+Mason Greenwood;ENG;FW,MF;Marseille;Ligue 1;2001;21;5;26
+Serhou Guirassy;GUI;FW;Dortmund;Bundesliga;1996;21;4;25
+Ousmane Dembélé;FRA;FW;Paris S-G;Ligue 1;1997;21;6;27
 Bryan Mbeumo;CMR;FW;Brentford;Premier League;1999;20;7;27
-Chris Wood;NZL;FW;Nott'ham Forest;Premier League;1991;20;3;23
 Alexander Sørloth;NOR;FW;Atlético Madrid;La Liga;1995;20;2;22
-Yoane Wissa;COD;FW;Brentford;Premier League;1996;19;4;23
 Ayoze Pérez;ESP;FW;Villarreal;La Liga;1993;19;2;21
-Raphinha;BRA;FW,MF;Barcelona;La Liga;1996;18;9;27
+Yoane Wissa;COD;FW;Brentford;Premier League;1996;19;4;23
 Jonathan Burkardt;GER;FW;Mainz 05;Bundesliga;2000;18;2;20
+Raphinha;BRA;FW,MF;Barcelona;La Liga;1996;18;9;27
 Julián Álvarez;ARG;FW;Atlético Madrid;La Liga;2000;17;4;21
-Jores Okore;DEN;FW;Galatasaray;Turkish Lig;1989;5;5;55
+Cristiano Ronaldo;POR;FW;Al Nasser;Saudi Pro League;1983;30;5;35

@@ -1,6 +1,7 @@
 import frugt from './src/frugt.js';
 import person from './src/person.js';
 import fodbold from './src/fodbold.js';
+import site from './src/site.js';
 
 import figlet from 'figlet';
 import chalk from 'chalk';
@@ -10,7 +11,8 @@ import { input, select } from '@inquirer/prompts';
 const ScriptType = Object.freeze({
     FRUIT: 1,
     PERSON: 2,
-    FOOTBALL: 3
+    FOOTBALL: 3,
+    SITE: 4,
 });
 
 export async function init() {
@@ -32,6 +34,7 @@ export async function init() {
             { name: "Script 1: fruit", value: ScriptType.FRUIT },
             { name: "Script 2: person", value: ScriptType.PERSON },
             { name: "Script 3: football", value: ScriptType.FOOTBALL },
+            { name: "Script 4: site", value: ScriptType.SITE },
             { name: chalk.red("Exit this program."), value: ScriptType.EXIT }
         ]
     });
@@ -39,7 +42,7 @@ export async function init() {
     switch (choice)
     {
         case ScriptType.FRUIT: {
-            executeFruitScript();
+            await frugt.executeScript();
             break;
         }
         case ScriptType.PERSON: {
@@ -48,6 +51,10 @@ export async function init() {
         }
         case ScriptType.FOOTBALL: {
             executeFootballScript();
+            break;
+        }
+        case ScriptType.SITE: {
+            await site.executeScript();
             break;
         }
         default:
